@@ -11,6 +11,10 @@
 |
 */
 
-Route::get('/', function () {
-    return view('home.index');
+Route::auth();
+
+Route::group(['middleware' => 'auth'], function () {
+
+	Route::resource('/', 'HomeController');
+
 });

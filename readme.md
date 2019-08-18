@@ -70,3 +70,7 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-source software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## BUGS
+
+Laratrust seeder (https://github.com/kristijanhusak/laravel-form-builder/issues/492#issuecomment-473573012)
