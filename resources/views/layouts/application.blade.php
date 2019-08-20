@@ -17,6 +17,9 @@
         <!-- Bootstrap -->
         <link href="{{ mix("/assets/css/styles.css") }}" rel="stylesheet">
 
+        <!-- swal -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.css">
+
     </head>
 
     <body class="nav-md">
@@ -57,6 +60,9 @@
 
         <!-- jQuery -->
         <script src="{{ mix("/assets/js/app.js") }}"></script>
+
+        <!-- swal -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
 
         <script type="text/javascript">
             //DISABLE BUTTON SUBMIT

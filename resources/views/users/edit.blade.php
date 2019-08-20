@@ -26,9 +26,9 @@
 			                </ul>
 			            @endif
 
-			            {!! Form::model($user, [
+			            {!! Form::model($data, [
 			                'method' => 'PATCH',
-			                'url' => ['/users', $user->id],
+			                'url' => ['/users', $data->id],
 			                'class' => 'form-horizontal form-label-left',
 			                'files' => true,
 			                'novalidate'

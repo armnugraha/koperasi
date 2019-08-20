@@ -1,7 +1,6 @@
 @extends('../layouts.application')
 
 @section('content')
-
 <!-- page content -->
 <div class="right_col" role="main">
  	
@@ -83,7 +82,7 @@
     $('#konten').DataTable({
         processing: true,
         serverSide: true,
-        ajax: path,
+        ajax: '',
         columns: [
             { title: '#', data: 'no', name: 'no', searchable:false },
             { title: 'Username', data: 'username', name: 'username' },
@@ -91,11 +90,48 @@
             { title: 'Email', data: 'email', name: 'email' },
             { title: 'Di Perbaharui', data: 'created_at', name: 'created_at' },
             { title: 'Di Buat', data: 'updated_at', name: 'updated_at' },
-            { title: '', data: 'id', name: 'id', sortable: false,render: function(data,type,full) {
-              return '<a href="'+genShowPath(data)+'"><button class="btn btn-success btn-xs"><i class="material-icons">search</i></button></a> ' +
-              '@if(\Laratrust::can("update-users")) <a href="'+genEditPath(data)+'"><button class="btn btn-warning btn-xs"><i class="material-icons">edit</i></button></a>@endif @if(\Laratrust::can("delete-users")) <button onclick="deleteData('+data+')" class="btn btn-danger btn-xs"><i class="material-icons">delete</i></button> @endif';
-            }},
+            @if(\Laratrust::can("update-users") && \Laratrust::can("delete-users"))
+              { title: '', data: 'id', name: 'id', sortable: false,render: function(data,type,full) {
+                return '@if(\Laratrust::can("update-users")) <a href="'+genEditPath(data)+'"><button class="btn btn-warning btn-xs"><i class="fa fa-pencil"></i></button></a>@endif @if(\Laratrust::can("delete-users")) <button onclick="deleteData('+data+')" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i></button> @endif';
+              }},
+            @endif
           ]
       });
+
+    @if(\Laratrust::can("delete-users"))
+      function deleteData(id) {
+        swal({
+            title: "Apakah Anda Yakin ?",
+            text: "Data akan Hilang Setelah Di Hapus!",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "Ya, Hapus!",
+            closeOnConfirm: false
+        }, function() {
+            sendAjax();
+        } );
+
+        function sendAjax() {
+          $.ajax({
+            url: path+'/'+id,
+            data: { '_token': '{{ csrf_token() }}' },
+            type: 'DELETE',
+            error: function() {
+              alert('error');
+            },
+            success: function(res) {
+                swal({
+                  title: "Berhasil Di Hapus!",
+                  text: "Data Telah Berhasil Di Hapus",
+                  type: "success"
+                }, function() {
+                  location.reload();
+                });
+            }
+          });
+        }
+      }
+    @endif
   </script>
 @endsection

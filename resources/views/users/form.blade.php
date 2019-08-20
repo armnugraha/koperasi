@@ -36,7 +36,7 @@
 <div class="item form-group">
     <label class="control-label col-md-1" for="name">Role <span class="required">*</span></label>
     <div class="col-md-6 col-sm-6 col-xs-12">
-        {!! Form::select('role', App\Role::pluck('display_name','id')->all(), null, ['class' => 'form-control show-tick', 'placeholder'=>'Pilih role'] ) !!}
+        {!! Form::select('role', App\Role::pluck('display_name','id')->all(), null, ['class' => 'form-control show-tick', 'placeholder'=>'Pilih role', 'required'] ) !!}
     </div>
 </div>
 

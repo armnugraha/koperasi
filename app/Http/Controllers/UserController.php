@@ -67,7 +67,7 @@ class UserController extends Controller
 
         $db = User::create($requestData);
 
-        $db->attachRole($requestData->input('role'));
+        $db->attachRole($requestData['role']);
 
         Session::flash('flash_message', 'User added!');
 
@@ -93,11 +93,17 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        if (Auth::user()->id != $user->id) {
+        if (Auth::user()->id != $user->id && !\Laratrust::can("update-users")) {
             return abort(404);
         }
 
-        return view("users.edit", compact('user'));
+        $data = User::select('users.id','users.username','users.name', 'users.email','roles.id as role')
+                ->join('role_user','role_user.user_id','users.id')
+                ->join('roles','role_user.role_id','roles.id')
+                ->where('users.id',$user->id)
+                ->first();
+
+        return view("users.edit", compact('data'));
     }
 
     /**
@@ -110,7 +116,7 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
 
-        if (Auth::user()->id != $user->id) {
+        if (Auth::user()->id != $user->id && !\Laratrust::can("update-users")) {
             return abort(404);
         }
 
@@ -131,8 +137,15 @@ class UserController extends Controller
 
         $requestData["password"] = bcrypt($requestData['password']);
 
-        $getUser = User::findOrFail($user->id);
-        $getUser->update($requestData);
+        $db = User::select('users.*','roles.id as role')
+                ->join('role_user','role_user.user_id','users.id')
+                ->join('roles','role_user.role_id','roles.id')
+                ->find($user->id);
+
+        $db->update($requestData);
+
+        $db->detachRole($db->role);
+        $db->attachRole($request['role']);
 
         Session::flash('flash_message', 'User updated!');
 
@@ -151,6 +164,6 @@ class UserController extends Controller
 
         Session::flash('flash_message', 'User deleted!');
 
-        return redirect("/users");
+        return 'ok';
     }
 }
