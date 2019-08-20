@@ -102,21 +102,72 @@
 
   <script type="text/javascript">
 
+    var path = "{{ url("/products") }}";
+
   	function createNew() {
   		window.location.href = '{{ url("/products/create") }}'
   	}
 
+    function genEditPath(id) {
+      return genShowPath(id) + '/edit';
+    }
+
+    function genShowPath(id) {
+      return path+'/'+id;
+    }
+
   	$('#konten').DataTable({
        	processing: true,
        	serverSide: true,
-        	ajax: '{{ url("/products") }}',
-  		columns: [
+        ajax: '',
+  		  columns: [
           	{ title: '#', data: 'no', name: 'no', searchable:false },
           	{ title: 'Nama', data: 'name', name: 'name' },
           	{ title: 'Harga', data: 'price', name: 'price' },
           	{ title: 'Di Perbaharui', data: 'created_at', name: 'created_at' },
           	{ title: 'Di Buat', data: 'updated_at', name: 'updated_at' },
-        	]
-      });
+            @if(\Laratrust::can("update-products") && \Laratrust::can("delete-products"))
+              { title: '', data: 'id', name: 'id', sortable: false,render: function(data,type,full) {
+                return '@if(\Laratrust::can("update-products")) <a href="'+genEditPath(data)+'"><button class="btn btn-warning btn-xs"><i class="fa fa-pencil"></i></button></a>@endif @if(\Laratrust::can("delete-products")) <button onclick="deleteData('+data+')" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i></button> @endif';
+              }},
+            @endif
+        ]
+    });
+
+    @if(\Laratrust::can("delete-products"))
+      function deleteData(id) {
+        swal({
+            title: "Apakah Anda Yakin ?",
+            text: "Data akan Hilang Setelah Di Hapus!",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "Ya, Hapus!",
+            closeOnConfirm: false
+        }, function() {
+            sendAjax();
+        } );
+
+        function sendAjax() {
+          $.ajax({
+            url: path+'/'+id,
+            data: { '_token': '{{ csrf_token() }}' },
+            type: 'DELETE',
+            error: function() {
+              alert('error');
+            },
+            success: function(res) {
+                swal({
+                  title: "Berhasil Di Hapus!",
+                  text: "Data Telah Berhasil Di Hapus",
+                  type: "success"
+                }, function() {
+                  location.reload();
+                });
+            }
+          });
+        }
+      }
+    @endif
   </script>
 @endsection

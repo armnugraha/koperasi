@@ -130,6 +130,10 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        //
+        Product::where('id', $product->id)->delete();
+
+        Session::flash('flash_message', 'Product deleted!');
+
+        return 'ok';
     }
 }
