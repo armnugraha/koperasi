@@ -12,7 +12,7 @@
 
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>Gentelella Alela! | </title>
+        <title>Koperasi ITB</title>
 
         <!-- Bootstrap -->
         <link href="{{ mix("/assets/css/styles.css") }}" rel="stylesheet">
@@ -47,7 +47,7 @@
                 <!-- footer content -->
                 <footer>
                     <div class="pull-right">
-                        Gentelella - Bootstrap Admin Template by <a href="https://colorlib.com">Colorlib</a>
+                        Koperasi ITB
                     </div>
                     <div class="clearfix"></div>
                 </footer>
@@ -57,6 +57,32 @@
 
         <!-- jQuery -->
         <script src="{{ mix("/assets/js/app.js") }}"></script>
+
+        <script type="text/javascript">
+            //DISABLE BUTTON SUBMIT
+            function submitForm(btn) {
+
+                $(document).ready(function() {
+                    $(document).on('submit', 'form', function() {
+                        btn.attr('disabled', 'disabled');
+                    });
+                });
+
+                // $.listen('parsley:form:validated', function(e){
+                //     if (e.validationResult) {
+                //         btn.disabled = true;
+                //         btn.form.submit();
+
+                //     }
+                // });
+            }
+
+            setTimeout(function() {
+                $('#successMessageAlert').fadeOut('fast');
+            }, 5000);
+        </script>
+
+        @yield("js")
     
     </body>
 

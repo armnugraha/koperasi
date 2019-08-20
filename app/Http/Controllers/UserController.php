@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Product;
+use App\User;
 use Illuminate\Http\Request;
 
 use Yajra\DataTables\DataTables;
 
 use Session, Validator, DB, Auth;
 
-class ProductController extends Controller
+class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,15 +18,16 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
+
         if ($request->ajax()) {
 
             DB::statement(DB::raw('set @rownum=0'));
-            $data = Product::select(DB::raw('@rownum  := @rownum  + 1 AS no'),'products.*');
+            $data = User::select(DB::raw('@rownum  := @rownum  + 1 AS no'),'users.*');
 
             return Datatables::of($data)->make(true);
         }
 
-        return view("products.index");
+        return view("users.index");
     }
 
     /**
@@ -36,7 +37,7 @@ class ProductController extends Controller
      */
     public function create()
     {
-        return view("products.create");
+        return view("users.create");
     }
 
     /**
@@ -50,86 +51,106 @@ class ProductController extends Controller
         $requestData = $request->all();
         
         $validator = Validator::make($requestData, [
+            'username' => 'required|unique:users,username',
             'name' => 'required',
-            'price' => 'required|numeric',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:6|confirmed',
         ]);
 
         if ($validator->fails()) {
-            return redirect('/products/create')
+            return redirect('/users/create')
                         ->withErrors($validator)
                         ->withInput();
         }
 
-        Product::create($requestData);
+        $requestData["password"] = bcrypt($requestData['password']);
 
-        Session::flash('flash_message', 'Product added!');
+        $db = User::create($requestData);
 
-        return redirect('/products');
+        $db->attachRole($requestData->input('role'));
+
+        Session::flash('flash_message', 'User added!');
+
+        return redirect('/users');
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Product  $product
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Product $product)
+    public function show(User $user)
     {
-
-        $getProduct = Product::findOrFail($product->id);
-
-        return view("products.show", compact("getProduct"));
+        return view("users.show");
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Product  $product
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Product $product)
+    public function edit(User $user)
     {
-        return view("products.edit", compact("product"));
+        if (Auth::user()->id != $user->id) {
+            return abort(404);
+        }
+
+        return view("users.edit", compact('user'));
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Product  $product
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Product $product)
+    public function update(Request $request, User $user)
     {
-        $requestData = $request->all();
 
+        if (Auth::user()->id != $user->id) {
+            return abort(404);
+        }
+
+        $requestData = $request->all();
+        
         $validator = Validator::make($requestData, [
+            'username' => 'required',
             'name' => 'required',
-            'price' => 'required|numeric',
+            'email' => 'required|email',
+            'password' => 'required|min:6|confirmed',
         ]);
 
         if ($validator->fails()) {
-            return redirect('/products/'.$product->id.'/edit')
+            return redirect('/users/'.$user->id.'/edit')
                         ->withErrors($validator)
                         ->withInput();
         }
-        
-        $getProduct = Product::findOrFail($product->id);
-        $getProduct->update($requestData);
 
-        Session::flash('flash_message', 'Product updated!');
+        $requestData["password"] = bcrypt($requestData['password']);
 
-        return redirect('/products');
+        $getUser = User::findOrFail($user->id);
+        $getUser->update($requestData);
+
+        Session::flash('flash_message', 'User updated!');
+
+        return redirect('/users');
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Product  $product
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Product $product)
+    public function destroy(User $user)
     {
-        //
+        User::where('id', $user->id)->delete();
+
+        Session::flash('flash_message', 'User deleted!');
+
+        return redirect("/users");
     }
 }

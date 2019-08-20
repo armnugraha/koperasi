@@ -8,7 +8,7 @@
  	<div class="">
     	<div class="page-title">
       		<div class="title_left">
-        		<h3>Product Lists</h3>
+        		<h3>Transaction Lists</h3>
       		</div>
 
 	      	<div class="title_right">
@@ -96,27 +96,26 @@
 
 </div>
 
-@endsection
+<script type="text/javascript">
+	function createNew() {
+		window.location.href = '{{ url("/transactions/create") }}'
+	}
 
-@section("js")
+	// $(function() {
 
-  <script type="text/javascript">
+	    $('#konten').DataTable({
+	     	processing: true,
+	     	serverSide: true,
+	      	ajax: '{{ url("/products") }}',
+			columns: [
+	        	{ title: '#', data: 'no', name: 'no', searchable:false },
+	        	{ title: 'Nama', data: 'nama', name: 'nama' },
+	        	{ title: 'Harga', data: 'price', name: 'price' },
+	        	{ title: 'Di Perbaharui', data: 'created_at', name: 'created_at' },
+	        	{ title: 'Di Buat', data: 'updated_at', name: 'updated_at' },
+	      	]
+	    });
+  // });
+</script>
 
-  	function createNew() {
-  		window.location.href = '{{ url("/products/create") }}'
-  	}
-
-  	$('#konten').DataTable({
-       	processing: true,
-       	serverSide: true,
-        	ajax: '{{ url("/products") }}',
-  		columns: [
-          	{ title: '#', data: 'no', name: 'no', searchable:false },
-          	{ title: 'Nama', data: 'name', name: 'name' },
-          	{ title: 'Harga', data: 'price', name: 'price' },
-          	{ title: 'Di Perbaharui', data: 'created_at', name: 'created_at' },
-          	{ title: 'Di Buat', data: 'updated_at', name: 'updated_at' },
-        	]
-      });
-  </script>
 @endsection
