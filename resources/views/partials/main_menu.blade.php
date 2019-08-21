@@ -66,6 +66,16 @@
 
             </ul>
 
+            {{-- <h3>Admin</h3>
+
+            <ul class="nav side-menu">
+                
+                <li>
+                    <a href="{{ url("/roles") }}"><i class="fa fa-cog"></i> Role & Permissions </a>
+                </li>
+
+            </ul> --}}
+
         </div>
 
     </div>

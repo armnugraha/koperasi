@@ -24,6 +24,8 @@
 
     <body class="nav-md">
 
+        @inject('helper', 'App\Helpers\AppHelper')
+
         <div class="container body">
       
             <div class="main_container">

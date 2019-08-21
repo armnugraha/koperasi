@@ -6,12 +6,11 @@
                <a id="menu_toggle"><i class="fa fa-bars"></i></a>
           </div>
 
-          @inject('helper', 'App\Helpers\AppHelper')
-
           <ul class="nav navbar-nav navbar-right">
                <li class="">
                     <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                        {{-- <img src="images/img.jpg" alt=""> --}}
+                       <span class=" fa fa-user"></span>
                        {!!$helper->get_session_user()['username']!!}
                        <span class=" fa fa-angle-down"></span>
                     </a>
@@ -28,7 +27,7 @@
                     </ul>
                </li>
 
-               <li role="presentation" class="dropdown">
+               {{-- <li role="presentation" class="dropdown">
                     <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown" aria-expanded="false">
                          <i class="fa fa-envelope-o"></i>
                          <span class="badge bg-green">6</span>
@@ -68,7 +67,7 @@
                               </div>
                          </li>
                     </ul>
-               </li>
+               </li> --}}
           </ul>
      
      </nav>

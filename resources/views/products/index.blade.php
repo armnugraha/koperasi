@@ -2,6 +2,8 @@
 
 @section('content')
 
+@inject('helper', 'App\Helpers\AppHelper')
+
 <!-- page content -->
 <div class="right_col" role="main">
  	
@@ -50,23 +52,17 @@
 
     		<div class="col-md-12">
                 <div class="x_panel">
-                 	<div class="x_title">
-                    	{{-- <h2>Hover rows <small>Try hovering over the rows</small></h2> --}}
-                    	<ul class="nav navbar-right panel_toolbox">
-                    		<button type="button" class="btn btn-success" onclick="createNew()">+ Create New</button>
-                      		{{-- <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
-                      		<li class="dropdown">
-                        		<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
-                        		<ul class="dropdown-menu" role="menu">
-                          			<li><a href="#">Settings 1</a></li>
-                          			<li><a href="#">Settings 2</a></li>
-                        		</ul>
-                      		</li>
-                      		<li><a class="close-link"><i class="fa fa-close"></i></a></li> --}}
-                    	</ul>
-                    	
-                    	<div class="clearfix"></div>
-                 	</div>
+
+                    @if($helper->get_session_user()['role_name'] == "admin")
+                       	<div class="x_title">
+                          	{{-- <h2>Hover rows <small>Try hovering over the rows</small></h2> --}}
+                          	<ul class="nav navbar-right panel_toolbox">
+                          		<button type="button" class="btn btn-success" onclick="createNew()">+ Create New</button>
+                          	</ul>
+                          	
+                          	<div class="clearfix"></div>
+                       	</div>
+                    @endif
 
                  	<div class="x_content">
                  		<table class="table table-hover" id="konten"></table>
@@ -147,9 +143,9 @@
           	{ title: 'Harga', data: 'price', name: 'price' },
           	{ title: 'Di Perbaharui', data: 'created_at', name: 'created_at' },
           	{ title: 'Di Buat', data: 'updated_at', name: 'updated_at' },
-            @if(\Laratrust::can("update-products") && \Laratrust::can("delete-products"))
+            @if($helper->get_session_user()['role_name'] == "admin")
               { title: '', data: 'id', name: 'id', sortable: false,render: function(data,type,full) {
-                return '@if(\Laratrust::can("update-products")) <a href="'+genEditPath(data)+'"><button class="btn btn-warning btn-xs"><i class="fa fa-pencil"></i></button></a>@endif @if(\Laratrust::can("delete-products")) <button onclick="deleteData('+data+')" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i></button> @endif';
+                return '<a href="'+genEditPath(data)+'"><button class="btn btn-warning btn-xs"><i class="fa fa-pencil"></i></button></a> <button onclick="deleteData('+data+')" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i></button>';
               }},
             @endif
         ]
