@@ -33,13 +33,11 @@
 						</div>
 
 						<ul class="nav navbar-right panel_toolbox">
+							<button type="button" onclick="table.buttons('.export-print').trigger();" class="btn btn-primary">+ Print</button>
 							<a href="{{ route("transactions.create") }}"><button type="button" class="btn btn-success">+
 									Create</button></a>
 							<div id="print">
 							</div>
-						</ul>
-						<ul class="nav navbar-right panel_toolbox">
-							<button type="button" onclick="table.buttons('.export-print').trigger();" class="btn btn-primary">+ Print</button>
 						</ul>
 
 						<div class="clearfix"></div>
