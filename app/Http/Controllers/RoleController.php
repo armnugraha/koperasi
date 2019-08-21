@@ -4,6 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use Yajra\DataTables\DataTables;
+
+use Session, Validator, DB, Auth;
+
+use App\Role;
+
 class RoleController extends Controller
 {
     /**
@@ -11,9 +17,17 @@ class RoleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        if ($request->ajax()) {
+
+            DB::statement(DB::raw('set @rownum=0'));
+            $data = Role::select(DB::raw('@rownum  := @rownum  + 1 AS no'),'roles.*');
+
+            return Datatables::of($data)->make(true);
+        }
+
+        return view("roles.index");
     }
 
     /**
@@ -23,7 +37,7 @@ class RoleController extends Controller
      */
     public function create()
     {
-        //
+        return view("roles.create");
     }
 
     /**
@@ -34,7 +48,23 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $requestData = $request->all();
+        
+        $validator = Validator::make($requestData, [
+            'name' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect('/roles/create')
+                        ->withErrors($validator)
+                        ->withInput();
+        }
+
+        Role::create($requestData);
+
+        Session::flash('flash_message', 'Role added!');
+
+        return redirect('/roles');
     }
 
     /**
@@ -54,9 +84,9 @@ class RoleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Role $role)
     {
-        //
+        return view("roles.edit");
     }
 
     /**
@@ -66,9 +96,26 @@ class RoleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Role $role)
     {
-        //
+        $requestData = $request->all();
+
+        $validator = Validator::make($requestData, [
+            'name' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect('/roles/'.$role->id.'/edit')
+                        ->withErrors($validator)
+                        ->withInput();
+        }
+        
+        $getRole = Role::findOrFail($role->id);
+        $getRole->update($requestData);
+
+        Session::flash('flash_message', 'Role updated!');
+
+        return redirect('/roles');
     }
 
     /**
@@ -77,8 +124,12 @@ class RoleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Role $role)
     {
-        //
+        Role::where('id', $role->id)->delete();
+
+        Session::flash('flash_message', 'Role deleted!');
+
+        return 'ok';
     }
 }
