@@ -22,19 +22,21 @@
 
 						<div class="col-md-3 col-sm-3 col-xs-12 form-group">
 							{!! Form::select('category', \App\User::all()->pluck('username','id'), null, ['class' =>
-							'form-control show-tick', 'onchange'=>'changeUser(this)','placeholder'=>'Pilih User'] ) !!}
+							'form-control show-tick', 'id' => 'userSelect', 'onchange'=>'changeUser(this)','placeholder'=>'Pilih User'] ) !!}
 						</div>
 						<div class="col-md-3 col-sm-3 col-xs-12 form-group">
-              <div class="input-group">
-                <div class="input-group-addon">
-                  <i class="fa fa-calendar"></i>
-                </div>
-                <input type="text" name="reportrange" id="reportrange-filter" class="form-control form-width-date"/>
-              </div>
+							<div class="input-group">
+								<div class="input-group-addon">
+									<i class="fa fa-calendar"></i>
+								</div>
+								<input type="text" name="reportrange" id="reportrange-filter"
+									class="form-control form-width-date" />
+							</div>
 						</div>
 
 						<ul class="nav navbar-right panel_toolbox">
-							<button type="button" onclick="table.buttons('.export-print').trigger();" class="btn btn-primary">+ Print</button>
+							<button type="button" onclick="table.buttons('.export-print').trigger();"
+								class="btn btn-primary">+ Print</button>
 							<a href="{{ route("transactions.create") }}"><button type="button" class="btn btn-success">+
 									Create</button></a>
 							<div id="print">
@@ -48,7 +50,12 @@
 						<table class="table table-hover" id="konten">
 							<tfoot>
 								<tr>
-									<th colspan="7" style="text-align:right">Total:</th>
+									<th></th>
+									<th></th>
+									<th></th>
+									<th></th>
+									<th></th>
+									<th style="text-align:right">Total:</th>
 									<th></th>
 								</tr>
 							</tfoot>
@@ -66,6 +73,9 @@
 @endsection
 
 @section('js')
+<script src="https://cdn.datatables.net/buttons/1.5.6/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.print.min.js"></script>
+
 <script type="text/javascript">
 	var path = "{{ route('transactions.index') }}";
 
@@ -94,9 +104,9 @@
 		],
 		buttons: [
 			{
-				text: '<i class="fa fa-lg fa-print"></i> Print Assets',
 				extend: 'print',
-				className: 'btn btn-primary btn-sm export-print'
+				className: 'export-print',
+				footer: true,
 			}
 		],
         "footerCallback": function ( row, data, start, end, display ) {
@@ -162,38 +172,36 @@
         }
       }
     @endrole
-</script>
 
-<script type="text/javascript">
-  $(document).ready(function() {
+	var today = new Date();
+	var dd = String(today.getDate()).padStart(2, '0');
+	var mm = String(today.getMonth()).padStart(2, '0');
+	var mmEnd = String(today.getMonth() + 1).padStart(2, '0');
+	var yyyy = today.getFullYear();
+	var startdate = yyyy + '/' + mm + '/' + dd;
+	var enddate = yyyy + '/' + mmEnd + '/' + dd;
 
-      var startdate;
-      var enddate;
+	// COMPLAINT
+	$('#reportrange-filter').daterangepicker({
+		"startDate": moment().subtract(1, 'month'),
+		"endDate": moment(),
 
-      // COMPLAINT
-      $('#reportrange-filter').daterangepicker({
-          "startDate": moment().subtract(7, 'days'),
-          "endDate": moment(),
+		ranges: {
+			'Today' : [moment(), moment()],
+			'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+			'Last 7 Days': [moment().subtract(7, 'days'), moment()],
+			'Last 30 Days': [moment().subtract(30, 'days'), moment()],
+			'This Month': [moment().startOf('month'), moment().endOf('month')],
+			'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+		}
+	});
 
-          ranges: {
-              'Today' : [moment(), moment()],
-              'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-              'Last 7 Days': [moment().subtract(7, 'days'), moment()],
-              'Last 30 Days': [moment().subtract(30, 'days'), moment()],
-              'This Month': [moment().startOf('month'), moment().endOf('month')],
-              'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-          }
-      });
+	$('#reportrange-filter').on('apply.daterangepicker', function(ev, picker) {
+		startdate=picker.startDate.format('YYYY-MM-DD');
+		enddate=picker.endDate.format('YYYY-MM-DD');
 
-      $('#reportrange-filter').on('apply.daterangepicker', function(ev, picker) {
-          startdate=picker.startDate.format('YYYY-MM-DD');
-          enddate=picker.endDate.format('YYYY-MM-DD');
-          oTable.fnDraw();
-          
-          get_filter_shm_complaint('{{url("/filter_complaint")}}',startdate, enddate);
+		table.ajax.url('?user_id='+document.getElementById('userSelect').value+'&startDate='+startdate+'&endDate='+enddate).load();
+	});
 
-      });
-
-  } );
 </script>
 @endsection
