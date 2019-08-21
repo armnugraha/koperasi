@@ -17,14 +17,14 @@
 <div class="item form-group" id="price">
   <label class="control-label col-md-1" for="price">Harga <span class="required">*</span></label>
   <div class="col-md-6 col-sm-6 col-xs-12">
-    {!! Form::number('price', null, ['class' =>'form-control', 'placeholder'=>'1000', 'required'] ) !!}
+    {!! Form::number('price', null, ['class' =>'form-control', 'placeholder'=>'1000', 'data-validate-minmax' => '1000', 'required'] ) !!}
   </div>
 </div>
 
 <div class="item form-group">
   <label class="control-label col-md-1" for="qty">Jumlah <span class="required">*</span></label>
   <div class="col-md-6 col-sm-6 col-xs-12">
-    {!! Form::number('qty', 1, ['class' =>'form-control', 'placeholder'=>'jumlah', 'required'] ) !!}
+    {!! Form::number('qty', 1, ['class' =>'form-control', 'placeholder'=>'jumlah', 'required', 'data-validate-minmax' => '1',] ) !!}
   </div>
 </div>
 
