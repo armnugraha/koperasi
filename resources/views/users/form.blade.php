@@ -19,19 +19,39 @@
     </div>
 </div>
 
-<div class="item form-group">
-    <label class="control-label col-md-1" for="name">Password <span class="required">*</span></label>
-    <div class="col-md-6 col-sm-6 col-xs-12">
-        <input id="password" type="password" name="password" data-validate-length="6,7" class="{{ $errors->has('password') ? 'form-control col-md-7 col-xs-12 parsley-error' : 'form-control col-md-7 col-xs-12' }}" required="required">
-    </div>
-</div>
+@if(isset($data))
 
-<div class="item form-group">
-    <label class="control-label col-md-1" for="name">Repeat Password <span class="required">*</span></label>
-    <div class="col-md-6 col-sm-6 col-xs-12">
-        <input id="password_confirmation" type="password" name="password_confirmation" data-validate-linked="password" class="{{ $errors->has('password_confirmation') ? 'form-control col-md-7 col-xs-12 parsley-error' : 'form-control col-md-7 col-xs-12' }}" required="required">
+    <div class="item form-group">
+        <label class="control-label col-md-1" for="name">Password <span class="required">*</span></label>
+        <div class="col-md-6 col-sm-6 col-xs-12">
+            <input id="password" type="password" name="password" class="{{ $errors->has('password') ? 'form-control col-md-7 col-xs-12 parsley-error' : 'form-control col-md-7 col-xs-12' }}">
+        </div>
     </div>
-</div>
+
+    <div class="item form-group">
+        <label class="control-label col-md-1" for="name">Repeat Password <span class="required">*</span></label>
+        <div class="col-md-6 col-sm-6 col-xs-12">
+            <input id="password_confirmation" type="password" name="password_confirmation" data-validate-linked="password" class="{{ $errors->has('password_confirmation') ? 'form-control col-md-7 col-xs-12 parsley-error' : 'form-control col-md-7 col-xs-12' }}">
+        </div>
+    </div>
+
+@else
+
+    <div class="item form-group">
+        <label class="control-label col-md-1" for="name">Password <span class="required">*</span></label>
+        <div class="col-md-6 col-sm-6 col-xs-12">
+            <input id="password" type="password" name="password" data-validate-length="6,7" class="{{ $errors->has('password') ? 'form-control col-md-7 col-xs-12 parsley-error' : 'form-control col-md-7 col-xs-12' }}" required="required">
+        </div>
+    </div>
+
+    <div class="item form-group">
+        <label class="control-label col-md-1" for="name">Repeat Password <span class="required">*</span></label>
+        <div class="col-md-6 col-sm-6 col-xs-12">
+            <input id="password_confirmation" type="password" name="password_confirmation" data-validate-linked="password" class="{{ $errors->has('password_confirmation') ? 'form-control col-md-7 col-xs-12 parsley-error' : 'form-control col-md-7 col-xs-12' }}" required="required">
+        </div>
+    </div>
+
+@endif
 
 <div class="item form-group">
     <label class="control-label col-md-1" for="name">Role <span class="required">*</span></label>

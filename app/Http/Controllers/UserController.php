@@ -121,21 +121,39 @@ class UserController extends Controller
         }
 
         $requestData = $request->all();
-        
-        $validator = Validator::make($requestData, [
-            'username' => 'required',
-            'name' => 'required',
-            'email' => 'required|email',
-            'password' => 'required|min:6|confirmed',
-        ]);
+
+        if ($request->input('password') == null) {
+            
+            $requestData = $request->except('password');
+
+            $rules = [
+                'username' => 'required',
+                'name' => 'required',
+                'email' => 'required|email',
+            ];
+
+            $validator = Validator::make($requestData, $rules);
+
+        } else {
+
+            $rules = [
+                'username' => 'required',
+                'name' => 'required',
+                'email' => 'required|email',
+                'password' => 'required|min:6|confirmed',
+            ];
+
+            $validator = Validator::make($requestData, $rules);
+
+            $requestData['password'] = bcrypt($requestData['password']);
+
+        }
 
         if ($validator->fails()) {
             return redirect('/users/'.$user->id.'/edit')
                         ->withErrors($validator)
                         ->withInput();
         }
-
-        $requestData["password"] = bcrypt($requestData['password']);
 
         $db = User::select('users.*','roles.id as role')
                 ->join('role_user','role_user.user_id','users.id')
