@@ -22,9 +22,14 @@ class TransactionController extends Controller
         if ($request->ajax()) {
 
             DB::statement(DB::raw('set @rownum=0'));
-            $data = Transaction::select(DB::raw('@rownum  := @rownum  + 1 AS no'),'transactions.*');
+            $data = Transaction::select(DB::raw('@rownum  := @rownum  + 1 AS no, transactions.qty * transactions.price AS total'),'transactions.*', 'users.username')
+                ->join('users','users.id','transactions.user_id');
 
-            return Datatables::of($data)->make(true);
+            if($request->input('user_id')){
+                $data->where('transactions.user_id', $request->input('user_id'));
+            }
+
+            return  Datatables::of($data)->make(true);
         }
 
         return view("transactions.index");
