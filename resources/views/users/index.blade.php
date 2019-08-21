@@ -1,6 +1,7 @@
 @extends('../layouts.application')
 
 @section('content')
+
 <!-- page content -->
 <div class="right_col" role="main">
  	
@@ -96,7 +97,7 @@
             { title: 'Di Buat', data: 'updated_at', name: 'updated_at' },
             @if(\Laratrust::can("update-users") && \Laratrust::can("delete-users"))
               { title: '', data: 'id', name: 'id', sortable: false,render: function(data,type,full) {
-                return '@if(\Laratrust::can("update-users")) <a href="'+genEditPath(data)+'"><button class="btn btn-warning btn-xs"><i class="fa fa-pencil"></i></button></a>@endif @if(\Laratrust::can("delete-users")) <button onclick="deleteData('+data+')" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i></button> @endif';
+                return '@if(\Laratrust::can("update-users")) <a href="'+genEditPath(data)+'"><button class="btn btn-warning btn-sm"><i class="fa fa-pencil"></i></button></a>@endif @if(\Laratrust::can("delete-users")) <button onclick="deleteData('+data+')" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></button> @endif';
               }},
             @endif
           ]
