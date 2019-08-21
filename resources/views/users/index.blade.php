@@ -38,14 +38,17 @@
 
   		<div class="col-md-12">
           <div class="x_panel">
-           	<div class="x_title">
+
+            @if(\Laratrust::can("create-users"))
+             	<div class="x_title">
 
               	<ul class="nav navbar-right panel_toolbox">
               		<button type="button" class="btn btn-success" onclick="createNew()">+ Create New</button>
               	</ul>
-              	
-              	<div class="clearfix"></div>
-           	</div>
+                	
+                <div class="clearfix"></div>
+             	</div>
+            @endif
 
            	<div class="x_content">
            		<table class="table table-hover" id="konten"></table>
@@ -88,6 +91,7 @@
             { title: 'Username', data: 'username', name: 'username' },
             { title: 'Nama', data: 'name', name: 'name' },
             { title: 'Email', data: 'email', name: 'email' },
+            { title: 'Saldo', data: 'saldo', name: 'saldo' },
             { title: 'Di Perbaharui', data: 'created_at', name: 'created_at' },
             { title: 'Di Buat', data: 'updated_at', name: 'updated_at' },
             @if(\Laratrust::can("update-users") && \Laratrust::can("delete-users"))
