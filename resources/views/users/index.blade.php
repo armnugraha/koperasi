@@ -31,13 +31,6 @@
     		<div class="title_left">
       		<h3>User Lists</h3>
     		</div>
-
-        <div class="input-group">
-          <div class="input-group-addon">
-                    <i class="fa fa-calendar"></i>
-                  </div>
-            <input type="text" name="reportrange" id="reportrange-filter" class="form-control form-width-date"/>
-        </div>
   	</div>
 
   	<div class="clearfix"></div>
@@ -73,39 +66,6 @@
 @endsection
 
 @section("js")
-
-  <script type="text/javascript">
-    $(document).ready(function() {
-
-        var startdate;
-        var enddate;
-
-        // COMPLAINT
-        $('#reportrange-filter').daterangepicker({
-            "startDate": moment().subtract(7, 'days'),
-            "endDate": moment(),
-
-            ranges: {
-                'Today' : [moment(), moment()],
-                'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                'Last 7 Days': [moment().subtract(7, 'days'), moment()],
-                'Last 30 Days': [moment().subtract(30, 'days'), moment()],
-                'This Month': [moment().startOf('month'), moment().endOf('month')],
-                'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-            }
-        });
-
-        $('#reportrange-filter').on('apply.daterangepicker', function(ev, picker) {
-            startdate=picker.startDate.format('YYYY-MM-DD');
-            enddate=picker.endDate.format('YYYY-MM-DD');
-            oTable.fnDraw();
-            
-            get_filter_shm_complaint('{{url("/filter_complaint")}}',startdate, enddate);
-
-        });
-
-    } );
-  </script>
 
   <script type="text/javascript">
 
