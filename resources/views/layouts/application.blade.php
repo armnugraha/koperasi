@@ -19,7 +19,8 @@
 
         <!-- swal -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.css">
-
+        <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.5.6/css/buttons.dataTables.min.css">
+        
     </head>
 
     <body class="nav-md">
@@ -63,8 +64,11 @@
         <!-- jQuery -->
         <script src="{{ mix("/assets/js/app.js") }}"></script>
 
-        <!-- swal -->
+        <!-- swal -->            
         <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
+        
+        <script src="https://cdn.datatables.net/buttons/1.5.6/js/dataTables.buttons.min.js"></script>
+        <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.print.min.js"></script>
 
         <script type="text/javascript">
             //DISABLE BUTTON SUBMIT
