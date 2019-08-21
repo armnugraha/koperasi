@@ -1,6 +1,7 @@
 @extends('../layouts.application')
 
 @section('content')
+
 <!-- page content -->
 <div class="right_col" role="main">
  	
@@ -30,6 +31,13 @@
     		<div class="title_left">
       		<h3>User Lists</h3>
     		</div>
+
+        <div class="input-group">
+          <div class="input-group-addon">
+                    <i class="fa fa-calendar"></i>
+                  </div>
+            <input type="text" name="reportrange" id="reportrange-filter" class="form-control form-width-date"/>
+        </div>
   	</div>
 
   	<div class="clearfix"></div>
@@ -67,6 +75,39 @@
 @section("js")
 
   <script type="text/javascript">
+    $(document).ready(function() {
+
+        var startdate;
+        var enddate;
+
+        // COMPLAINT
+        $('#reportrange-filter').daterangepicker({
+            "startDate": moment().subtract(7, 'days'),
+            "endDate": moment(),
+
+            ranges: {
+                'Today' : [moment(), moment()],
+                'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                'Last 7 Days': [moment().subtract(7, 'days'), moment()],
+                'Last 30 Days': [moment().subtract(30, 'days'), moment()],
+                'This Month': [moment().startOf('month'), moment().endOf('month')],
+                'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            }
+        });
+
+        $('#reportrange-filter').on('apply.daterangepicker', function(ev, picker) {
+            startdate=picker.startDate.format('YYYY-MM-DD');
+            enddate=picker.endDate.format('YYYY-MM-DD');
+            oTable.fnDraw();
+            
+            get_filter_shm_complaint('{{url("/filter_complaint")}}',startdate, enddate);
+
+        });
+
+    } );
+  </script>
+
+  <script type="text/javascript">
 
     var path = "{{ url("/users") }}";
 
@@ -96,7 +137,7 @@
             { title: 'Di Buat', data: 'updated_at', name: 'updated_at' },
             @if(\Laratrust::can("update-users") && \Laratrust::can("delete-users"))
               { title: '', data: 'id', name: 'id', sortable: false,render: function(data,type,full) {
-                return '@if(\Laratrust::can("update-users")) <a href="'+genEditPath(data)+'"><button class="btn btn-warning btn-xs"><i class="fa fa-pencil"></i></button></a>@endif @if(\Laratrust::can("delete-users")) <button onclick="deleteData('+data+')" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i></button> @endif';
+                return '@if(\Laratrust::can("update-users")) <a href="'+genEditPath(data)+'"><button class="btn btn-warning btn-sm"><i class="fa fa-pencil"></i></button></a>@endif @if(\Laratrust::can("delete-users")) <button onclick="deleteData('+data+')" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></button> @endif';
               }},
             @endif
           ]
