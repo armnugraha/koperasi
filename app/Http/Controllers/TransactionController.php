@@ -3,7 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Transaction;
+use App\Product;
+use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Validator, Illuminate\Support\Facades\Session, DB;
+use Yajra\DataTables\Facades\DataTables;
 
 class TransactionController extends Controller
 {
@@ -12,8 +17,16 @@ class TransactionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        if ($request->ajax()) {
+
+            DB::statement(DB::raw('set @rownum=0'));
+            $data = Transaction::select(DB::raw('@rownum  := @rownum  + 1 AS no'),'transactions.*');
+
+            return Datatables::of($data)->make(true);
+        }
+
         return view("transactions.index");
     }
 
@@ -35,7 +48,46 @@ class TransactionController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $requestData = $request->all();
+        
+        $validator = Validator::make($requestData, [
+            'product_id' => 'nullable|exists:products,id',
+            'user_id' => 'required|exists:users,id',
+            'date' => 'required|date',
+            'qty' => 'required|min:1',
+            'price' => 'nullable|min:1|numeric',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->route('transactions.create')
+                        ->withErrors($validator)
+                        ->withInput();
+        }
+
+        $product = Product::find($requestData['product_id']);
+        if($product) {
+            $requestData['value'] = $product->name;
+            $requestData['price'] = $product->price;    
+
+            $user = User::find($requestData['user_id']);
+            $user['saldo'] = $user->saldo - $requestData['price'] * $requestData['qty'];
+            $user->save();
+        } else {
+            $requestData['value'] = 'Deposit';
+            
+            $user = User::find($requestData['user_id']);
+            $user['saldo'] = $user->saldo + $requestData['price'] * $requestData['qty'];
+            $user->save();
+        }
+
+        $d=strtotime($requestData['date']);
+        $requestData['date'] = date('Y-m-d',$d);
+
+        $db = Transaction::create($requestData);
+
+        Session::flash('flash_message', 'Success added!');
+
+        return redirect()->route('transactions.index');
     }
 
     /**
@@ -46,7 +98,7 @@ class TransactionController extends Controller
      */
     public function show(Transaction $transaction)
     {
-        return view("transactions.show");
+        return view("transactions.show", ['transaction' => $transaction]);
     }
 
     /**
@@ -56,8 +108,9 @@ class TransactionController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function edit(Transaction $transaction)
-    {
-        return view("transactions.edit");
+    {   
+        $transaction['date'] = date('m/d/Y', strtotime($transaction['date']));
+        return view("transactions.edit", ['transaction' => $transaction]);
     }
 
     /**
@@ -69,7 +122,6 @@ class TransactionController extends Controller
      */
     public function update(Request $request, Transaction $transaction)
     {
-        //
     }
 
     /**
@@ -79,7 +131,16 @@ class TransactionController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function destroy(Transaction $transaction)
-    {
-        //
+    {   
+        $user = User::find($transaction->user_id);
+        if($transaction->value == 'Deposit') {
+            $user['saldo'] = $user->saldo - ($transaction->price * $transaction->qty);
+        } else {
+            $user['saldo'] = $user->saldo + ($transaction->price * $transaction->qty);
+        }
+        $user->save();
+
+        $transaction->delete();
+        return 'ok';
     }
 }
