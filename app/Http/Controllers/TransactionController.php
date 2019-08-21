@@ -25,9 +25,13 @@ class TransactionController extends Controller
             $data = Transaction::select(DB::raw('@rownum  := @rownum  + 1 AS no, transactions.qty * transactions.price AS total'),'transactions.*', 'users.username')
                 ->join('users','users.id','transactions.user_id');
 
+            if($request->input('startDate')) {
+                $data->whereBetween('transactions.date', [$request->input('startDate'), $request->input('endDate')]);
+            }
+
             if($request->input('user_id')){
                 $data->where('transactions.user_id', $request->input('user_id'));
-            }
+            } 
 
             return  Datatables::of($data)->make(true);
         }
