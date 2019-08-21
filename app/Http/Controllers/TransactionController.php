@@ -12,6 +12,12 @@ use Yajra\DataTables\Facades\DataTables;
 
 class TransactionController extends Controller
 {
+
+    public function checkAdmin() {
+        if(Auth::user()->hasRole('user')) {
+            abort(404);
+        }
+    }
     /**
      * Display a listing of the resource.
      *
@@ -33,6 +39,10 @@ class TransactionController extends Controller
                 $data->where('transactions.user_id', $request->input('user_id'));
             } 
 
+            if(Auth::user()->hasRole('user')){
+                $data->where('transactions.user_id', Auth::user()->id);
+            } 
+
             return  Datatables::of($data)->make(true);
         }
 
@@ -46,6 +56,7 @@ class TransactionController extends Controller
      */
     public function create()
     {
+        $this->checkAdmin();
         return view("transactions.create");
     }
 
@@ -57,6 +68,8 @@ class TransactionController extends Controller
      */
     public function store(Request $request)
     {
+        $this->checkAdmin();
+
         $requestData = $request->all();
         
         $validator = Validator::make($requestData, [
@@ -118,6 +131,7 @@ class TransactionController extends Controller
      */
     public function edit(Transaction $transaction)
     {   
+        $this->checkAdmin();
         $transaction['date'] = date('m/d/Y', strtotime($transaction['date']));
         return view("transactions.edit", ['transaction' => $transaction]);
     }
@@ -141,6 +155,7 @@ class TransactionController extends Controller
      */
     public function destroy(Transaction $transaction)
     {   
+        $this->checkAdmin();
         $user = User::find($transaction->user_id);
         if($transaction->value == 'Deposit') {
             $user['saldo'] = $user->saldo - ($transaction->price * $transaction->qty);

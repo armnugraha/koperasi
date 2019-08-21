@@ -20,10 +20,12 @@
 				<div class="x_panel">
 					<div class="x_title">
 
+						@role('admin')
 						<div class="col-md-3 col-sm-3 col-xs-12 form-group">
 							{!! Form::select('category', \App\User::all()->pluck('username','id'), null, ['class' =>
 							'form-control show-tick', 'id' => 'userSelect', 'onchange'=>'changeUser(this)','placeholder'=>'Pilih User'] ) !!}
 						</div>
+						@endrole
 						<div class="col-md-3 col-sm-3 col-xs-12 form-group">
 							<div class="input-group">
 								<div class="input-group-addon">
@@ -37,10 +39,10 @@
 						<ul class="nav navbar-right panel_toolbox">
 							<button type="button" onclick="table.buttons('.export-print').trigger();"
 								class="btn btn-primary">+ Print</button>
+							@role('admin')
 							<a href="{{ route("transactions.create") }}"><button type="button" class="btn btn-success">+
 									Create</button></a>
-							<div id="print">
-							</div>
+							@endrole
 						</ul>
 
 						<div class="clearfix"></div>
@@ -200,7 +202,12 @@
 		startdate=picker.startDate.format('YYYY-MM-DD');
 		enddate=picker.endDate.format('YYYY-MM-DD');
 
+		@role('admin')
 		table.ajax.url('?user_id='+document.getElementById('userSelect').value+'&startDate='+startdate+'&endDate='+enddate).load();
+		@else
+		table.ajax.url('?startDate='+startdate+'&endDate='+enddate).load();
+		@endrole
+
 	});
 
 </script>
